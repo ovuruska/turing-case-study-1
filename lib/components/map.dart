@@ -8,6 +8,8 @@ import 'package:maps_places/blocs/coords.dart';
 import 'package:maps_places/blocs/places.dart';
 import 'package:maps_places/common/stream_listenable_builder.dart';
 
+import 'marker_dialog.dart';
+
 
 class GoogleMapView extends StatelessWidget {
   Completer<GoogleMapController> _controller = Completer();
@@ -27,6 +29,12 @@ class GoogleMapView extends StatelessWidget {
     Set<Marker> _markers = {};
     placesBloc.value.places.forEach((place) {
       _markers.add(Marker(
+        onTap: (){
+          print("asdfasd");
+          showDialog(context: context, builder: (context){
+            return MarkerDialog(place: place);
+          });
+        },
           markerId: MarkerId(place.placeId),
           position: LatLng(place.location.lat, place.location.lng),
           infoWindow: InfoWindow(

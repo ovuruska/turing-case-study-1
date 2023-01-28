@@ -19,7 +19,9 @@ class _AppBarSearchState extends State<AppBarSearch> {
   void initState() {
     super.initState();
     focusNode.addListener(() {
-      fetchResults();
+      if(!focusNode.hasFocus){
+        fetchResults();
+      }
     });
   }
 

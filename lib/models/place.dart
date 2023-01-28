@@ -67,8 +67,9 @@ class GoogleMapsPlace {
   final String name;
   final String vicinity;
   final String placeId;
-
-  GoogleMapsPlace({required this.location,required this.name,required this.vicinity,required this.placeId});
+  final List<String> photoReferences;
+  final List<String> types;
+  GoogleMapsPlace({required this.location,required this.name,required this.vicinity,required this.placeId,required this.photoReferences,required this.types});
 
   factory GoogleMapsPlace.fromJson(Map<String, dynamic> json) {
     return GoogleMapsPlace(
@@ -76,6 +77,8 @@ class GoogleMapsPlace {
             json["geometry"]["location"]["lng"]),
         name:json["name"],
       vicinity:json["vicinity"],
+      types:json["types"].cast<String>(),
+      photoReferences:json["photos"].map<String>((e) => e["photo_reference"].toString()).toList(),
       placeId: json["place_id"]
     );
   }
