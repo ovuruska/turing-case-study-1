@@ -1,4 +1,3 @@
-
 /*
 "business_status": "OPERATIONAL",
             "geometry": {
@@ -54,12 +53,11 @@ class GoogleMapsLocation {
   final double lng;
 
   GoogleMapsLocation(this.lat, this.lng);
+
   @override
   String toString() {
     return "$lat,$lng";
   }
-
-
 }
 
 class GoogleMapsPlace {
@@ -69,19 +67,36 @@ class GoogleMapsPlace {
   final String placeId;
   final List<String> photoReferences;
   final List<String> types;
-  GoogleMapsPlace({required this.location,required this.name,required this.vicinity,required this.placeId,required this.photoReferences,required this.types});
+  final double rating;
+  final int userRatingsTotal;
+  final bool openNow;
+
+  GoogleMapsPlace(
+      {required this.location,
+      required this.name,
+      required this.vicinity,
+      required this.placeId,
+      required this.photoReferences,
+      required this.rating,
+      required this.userRatingsTotal,
+        required this.openNow,
+      required this.types});
 
   factory GoogleMapsPlace.fromJson(Map<String, dynamic> json) {
     return GoogleMapsPlace(
-        location:GoogleMapsLocation(json["geometry"]["location"]["lat"],
+      openNow: json['opening_hours']['open_now'],
+      rating: json['rating'] ?? 0,
+      userRatingsTotal: json['user_ratings_total'] ?? 0,
+        location: GoogleMapsLocation(json["geometry"]["location"]["lat"],
             json["geometry"]["location"]["lng"]),
-        name:json["name"],
-      vicinity:json["vicinity"],
-      types:json["types"].cast<String>(),
-      photoReferences:json["photos"].map<String>((e) => e["photo_reference"].toString()).toList(),
-      placeId: json["place_id"]
-    );
+        name: json["name"],
+        vicinity: json["vicinity"],
+        types: json["types"].cast<String>(),
+        photoReferences: json["photos"] == null
+            ? []
+            : json["photos"]
+                .map<String>((e) => e["photo_reference"].toString())
+                .toList(),
+        placeId: json["place_id"]);
   }
-
-
 }

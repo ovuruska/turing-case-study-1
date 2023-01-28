@@ -10,13 +10,37 @@ class GoogleMapsRepository {
 
   GoogleMapsRepository._();
 
+  String getUrl(String photoReference,
+      {int ?maxWidth = null,int? maxHeight=null})  {
+    Map<String, dynamic> queryParams = {
+      "photo_reference": photoReference,
+      "key": APIKeyRepository.instance.key,
+    };
+    if(maxHeight != null){
+      queryParams["maxheight"] = maxHeight.toString();
+    }else{
+      queryParams["maxheight"] = "1600";
+    }
+    if(maxWidth != null){
+      queryParams["maxwidth"] = maxWidth.toString();
+    }
+    else{
+      queryParams["maxwidth"] = "1600";
+    }
+
+
+    var url = Uri.https(
+        'maps.googleapis.com','/maps/api/place/photo',queryParams);
+    return url.toString();
+  }
+
   Future<Uint8List> getPhoto(String photoReference,
       {int maxWidth = 64,int maxHeight=64}) async {
     Map<String, dynamic> queryParams = {
       "photo_reference": photoReference,
       "key": APIKeyRepository.instance.key,
-      "maxHeight":maxHeight.toString(),
-      "maxWidth":maxWidth.toString()
+      "maxheight":maxHeight.toString(),
+      "maxwidth":maxWidth.toString()
     };
 
     var url = Uri.https(

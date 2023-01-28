@@ -2,29 +2,12 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:maps_places/blocs/details.dart';
 import 'package:maps_places/models/place.dart';
 import 'package:maps_places/repositories/google_maps.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-/*
-
-Expanded(
-                              child: Wrap(
-                            children: List<Widget>.generate(
-                              options.length,
-                              (int idx) {
-                                return ChoiceChip(
-                                  selectedColor: Color(0xFFD6D8DA),
-                                  label: Text(options[idx],
-                                      style: TextStyle(
-                                          color: Color(0xFF989898),
-                                          fontWeight: FontWeight.bold)),
-                                  selected: true,
-                                );
-                              },
-                            ).toList(),
-                          ))
- */
+import 'maps_image.dart';
 
 class MarkerDialog extends StatefulWidget {
   final GoogleMapsPlace place;
@@ -40,50 +23,41 @@ class _MarkerDialogState extends State<MarkerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    var photoReferences = widget.place.photoReferences;
     var types = widget.place.types;
-    if (photo == null && photoReferences.isNotEmpty) {
-      GoogleMapsRepository.instance
-          .getPhoto(photoReferences[0])
-          .then((value) => setState(() {
-                photo = value;
-              }));
-    }
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      //this right here
-      child: Container(
-        height: 128,
-        width: 320,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: (photo == null)
-                  ? Placeholder(
-                      fallbackHeight: 96,
-                      fallbackWidth: 96,
-                    )
-                  : Image.memory(photo!),
-            ),
-            Flexible(
-              child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        //this right here
+        child: SizedBox(
+            width: 320,
+            height: 360,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12)),
+                    child: CachedNetworkImage(
+                        width: 320,
+                        height: 160,
+                        fit: BoxFit.cover,
+                        imageUrl: GoogleMapsRepository.instance.getUrl(
+                          widget.place.photoReferences[0],
+                        ))),
+                Container(height: 8),
                 Text(widget.place.name,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12)),
+                        fontSize: 16)),
+                Container(height: 8),
                 Text(widget.place.vicinity,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                TextStyle(color: Colors.grey, fontSize: 9)),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+                Container(height: 8),
                 Wrap(
                   children: List<Widget>.generate(
                     max(0, min(types.length, 2)),
@@ -93,24 +67,29 @@ class _MarkerDialogState extends State<MarkerDialog> {
                           child: Container(
                               padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                  color: Color(0xFFD6D8DA),
+                                  color: Colors.blue,
                                   borderRadius: BorderRadius.circular(4)),
                               child: Text(types[idx],
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 9,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.bold))));
                     },
                   ).toList(),
                 ),
-                ElevatedButton(
-                    onPressed: () => print("Button pressed."),
-                    child: Text("Details"))
+                Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            detailsBloc.setPlace(widget.place);
+                            Navigator.pushNamed(context, '/details');
+                          },
+                          child: Text("Details"))
+                    ])),
+                Container(height: 8)
               ],
-            ))
-          ],
-        ),
-      ),
-    );
+            )));
   }
 }

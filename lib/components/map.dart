@@ -30,7 +30,6 @@ class GoogleMapView extends StatelessWidget {
     placesBloc.value.places.forEach((place) {
       _markers.add(Marker(
         onTap: (){
-          print("asdfasd");
           showDialog(context: context, builder: (context){
             return MarkerDialog(place: place);
           });

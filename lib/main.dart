@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:maps_places/common/nav.dart';
 import 'package:maps_places/pages/main.dart';
 
 import 'package:maps_places/repositories/api_key.dart';
@@ -16,6 +17,6 @@ void main() async {
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
   }
-  runApp(
-      const MaterialApp(debugShowCheckedModeBanner: false, home: MainView()));
+  runApp(MaterialApp(
+      routes: routes, debugShowCheckedModeBanner: false, initialRoute: "/home"));
 }
